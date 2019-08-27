@@ -11,8 +11,7 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class MapActor<K, V> extends AbstractActorWithTimers {
-    private static Object TIMEOUT_REMOVE_KEY = "TimeoutRemoveKey";
-
+    private final HashMap<K, V> internalState;
     private final HashMap<K, V> internalState;
 
     public static class GetRequest<K, V> {
@@ -90,7 +89,7 @@ public class MapActor<K, V> extends AbstractActorWithTimers {
 
     private void put(PutRequest<K, V> putRequest) {
         this.internalState.put(putRequest.key, putRequest.value);
-        getTimers().startSingleTimer(TIMEOUT_REMOVE_KEY, new RemoveRequest<>(putRequest.key), new FiniteDuration(putRequest.duration, putRequest.unit));
+        getTimers().startSingleTimer(putRequest.key, new RemoveRequest<>(putRequest.key), new FiniteDuration(putRequest.duration, putRequest.unit));
         //sender().tell("", self());
     }
 
