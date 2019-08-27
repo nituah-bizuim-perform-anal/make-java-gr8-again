@@ -86,7 +86,7 @@ public class MapActor<K, V> extends AbstractActor {
 
     private void put(PutRequest<K, V> putRequest) {
         this.internalState.put(putRequest.key, putRequest.value);
-        sender().tell("", self());
+        //sender().tell("", self());
     }
 
     private void get(GetRequest<K, V> getRequest) {
