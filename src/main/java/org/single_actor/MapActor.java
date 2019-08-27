@@ -89,6 +89,11 @@ public class MapActor<K, V> extends AbstractActorWithTimers {
 
     private void put(PutRequest<K, V> putRequest) {
         this.internalState.put(putRequest.key, putRequest.value);
+
+        // NOTE - VERY IMPORTANT!!!!!%@#$)$@#*)!@#$jasfdkasdfjlkfdsjglksdfjgkl my dad beats me at nights
+        // According to Akka's documentation, startSingleTimer ensures that if we schedule 2 single timers
+        // with the same key, the previous one is cancelled. Hence we don't have to use the AtomicLong and the wrapper
+        // class that uses it anymore - we can have Akka take care for it.
         getTimers().startSingleTimer(putRequest.key, new RemoveRequest<>(putRequest.key), new FiniteDuration(putRequest.duration, putRequest.unit));
         //sender().tell("", self());
     }
