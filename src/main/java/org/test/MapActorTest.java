@@ -27,6 +27,16 @@ public class MapActorTest {
     }
 
     @Test
+    public void SingleMapActor_Remove_Key_Wait_Forever_Die_Respawn_And_Check_That_Item_Has_Been_Automatically_Removed_Test() throws InterruptedException {
+        TimedSizableMap<String, Integer> map = new SingleActorTimedSizableHashMap<>();
+        map.put("hh", 420, 5, TimeUnit.SECONDS);
+        Thread.sleep(100);
+        assertEquals(1, map.size());
+        Thread.sleep(6000);
+        assertEquals(0, map.size());
+    }
+
+    @Test
     public void SingleMapActor_Remove_Key() throws InterruptedException {
         TimedSizableMap<String, Integer> map = new SingleActorTimedSizableHashMap<>();
         map.put("gil", 420, 69, TimeUnit.SECONDS);

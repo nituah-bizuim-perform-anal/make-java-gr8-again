@@ -1,14 +1,18 @@
 package org.single_actor;
 
 import akka.actor.AbstractActor;
+import akka.actor.AbstractActorWithTimers;
 import akka.actor.Props;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import scala.concurrent.duration.FiniteDuration;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public class MapActor<K, V> extends AbstractActor {
+public class MapActor<K, V> extends AbstractActorWithTimers {
+    private static Object TIMEOUT_REMOVE_KEY = "TimeoutRemoveKey";
+
     private final HashMap<K, V> internalState;
 
     public static class GetRequest<K, V> {
@@ -86,6 +90,7 @@ public class MapActor<K, V> extends AbstractActor {
 
     private void put(PutRequest<K, V> putRequest) {
         this.internalState.put(putRequest.key, putRequest.value);
+        getTimers().startSingleTimer(TIMEOUT_REMOVE_KEY, new RemoveRequest<>(putRequest.key), new FiniteDuration(putRequest.duration, putRequest.unit));
         //sender().tell("", self());
     }
 
@@ -98,7 +103,7 @@ public class MapActor<K, V> extends AbstractActor {
         sender().tell(this.internalState.size(), self());
     }
 
-    private void remove(RemoveRequest<K> key) {
-        sender().tell(this.internalState.remove(key), self());
+    private void remove(RemoveRequest<K> removeRequest) {
+        sender().tell(this.internalState.remove(removeRequest.key), self());
     }
 }
