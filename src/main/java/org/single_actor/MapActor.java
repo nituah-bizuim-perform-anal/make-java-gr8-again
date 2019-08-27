@@ -101,7 +101,7 @@ public class MapActor<K, V> extends AbstractActor {
         return this.internalState.size();
     }
 
-    private void remove(RemoveRequest<K> key) {
-        this.internalState.remove(key);
+    private V remove(RemoveRequest<K> key) {
+        return this.internalState.remove(key);
     }
 }
