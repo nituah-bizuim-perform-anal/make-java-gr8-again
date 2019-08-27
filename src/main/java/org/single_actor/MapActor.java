@@ -76,13 +76,8 @@ public class MapActor<K, V> extends AbstractActor {
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(
-                        GetRequest.class,
-                        this::get
-                ).match(RemoveRequest.class,
-                        this::remove).match(PutRequest.class, s -> {
-
-                })
+                .match(GetRequest.class, this::get)
+                .match(RemoveRequest.class, this::remove)
                 .match(GetSizeRequest.class, this::getSize)
                 .match(PutRequest.class, this::put)
                 .matchAny(o -> log.info("the fuck? get outta here lol"))
@@ -91,7 +86,7 @@ public class MapActor<K, V> extends AbstractActor {
 
     private void put(PutRequest<K, V> putRequest) {
         this.internalState.put(putRequest.key, putRequest.value);
-        sender().tell(null, self());
+        sender().tell("", self());
     }
 
     private void get(GetRequest<K, V> getRequest) {
