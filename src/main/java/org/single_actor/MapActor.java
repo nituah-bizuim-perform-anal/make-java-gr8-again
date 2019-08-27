@@ -93,8 +93,8 @@ public class MapActor<K, V> extends AbstractActor {
         this.internalState.put(putRequest.key, putRequest.value);
     }
 
-    private V get(GetRequest<K, V> getRequest) {
-        return this.internalState.get(getRequest.key);
+    private void get(GetRequest<K, V> getRequest) {
+        sender().tell(this.internalState.get(getRequest.key), self());
     }
 
     private void getSize(GetSizeRequest req) {
@@ -103,6 +103,6 @@ public class MapActor<K, V> extends AbstractActor {
     }
 
     private V remove(RemoveRequest<K> key) {
-        return this.internalState.remove(key);
+        sender().tell(this.internalState.remove(key), self());
     }
 }
