@@ -18,11 +18,12 @@ import java.util.concurrent.TimeUnit;
 public class SingleActorTimedSizableHashMap<K, V> implements TimedSizableMap<K, V> {
     private final Timeout globalTimeout = new Timeout(1, TimeUnit.SECONDS);
     private final FiniteDuration globalTimeoutDuration = globalTimeout.duration();
+    private ActorSystem system;
 
     private ActorRef mapActor;
 
     public SingleActorTimedSizableHashMap() {
-        ActorSystem system = ActorSystem.create("testSystem");
+        system = ActorSystem.create("testSystem");
 
         this.mapActor = system.actorOf(MapActor.props());
     }
@@ -73,5 +74,6 @@ public class SingleActorTimedSizableHashMap<K, V> implements TimedSizableMap<K, 
 
     public void kill(){
         this.mapActor.tell(new MapActor.KillRequest(), ActorRef.noSender());
+        system.terminate();
     }
 }

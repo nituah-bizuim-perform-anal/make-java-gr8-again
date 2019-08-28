@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SingleActorTimedSizableHashMap_bench {
 
-    final static int COUNT = 1000;
+    final static int COUNT = 10000;
 
     @State(Scope.Thread)
     public static class MyState {
@@ -48,6 +48,7 @@ public class SingleActorTimedSizableHashMap_bench {
     @Benchmark
     @BenchmarkMode(Mode.All)
     @OutputTimeUnit(TimeUnit.SECONDS)
+    @Warmup(iterations = 1, time = 2)
     public void getValues(MyState state) throws InterruptedException {
         for(int i =0; i<COUNT;i++)
             Optional.ofNullable(state.map.get(i));
@@ -56,6 +57,7 @@ public class SingleActorTimedSizableHashMap_bench {
     @Benchmark
     @BenchmarkMode(Mode.All)
     @OutputTimeUnit(TimeUnit.SECONDS)
+    @Warmup(iterations = 1, time = 2)
     public void putKeys(MyState state) throws InterruptedException {
         for(int i =0; i<COUNT;i++)
             state.map.put(i, String.valueOf(i), 10,TimeUnit.SECONDS);
@@ -64,6 +66,7 @@ public class SingleActorTimedSizableHashMap_bench {
     @Benchmark
     @BenchmarkMode(Mode.All)
     @OutputTimeUnit(TimeUnit.SECONDS)
+    @Warmup(iterations = 1, time = 2)
     public void removeKey(MyState state) throws InterruptedException {
         for(int i =0; i<COUNT;i++)
             state.map.remove(42069);
@@ -72,6 +75,7 @@ public class SingleActorTimedSizableHashMap_bench {
     @Benchmark
     @BenchmarkMode(Mode.All)
     @OutputTimeUnit(TimeUnit.SECONDS)
+    @Warmup(iterations = 1, time = 2)
     public void removeKeys(MyState state) throws InterruptedException {
         for(int i =COUNT; i<COUNT * 2;i++)
             state.map.put(i, String.valueOf(i), 10,TimeUnit.SECONDS);
