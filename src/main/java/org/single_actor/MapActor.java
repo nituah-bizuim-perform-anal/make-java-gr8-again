@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 public class MapActor<K, V> extends AbstractActorWithTimers {
     private final HashMap<K, V> internalState;
-    private final HashMap<K, V> internalState;
 
     public static class GetRequest<K, V> {
         private final K key;
