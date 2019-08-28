@@ -65,6 +65,11 @@ public class MapActor<K, V> extends AbstractActorWithTimers {
         }
     }
 
+    public static class KillRequest{
+        public KillRequest(){
+        }
+    }
+
     private final LoggingAdapter log = Logging.getLogger(getContext().getSystem(), this);
 
     static Props props() {
@@ -82,6 +87,7 @@ public class MapActor<K, V> extends AbstractActorWithTimers {
                 .match(RemoveRequest.class, this::remove)
                 .match(GetSizeRequest.class, this::getSize)
                 .match(PutRequest.class, this::put)
+                .match(KillRequest.class, this::kill)
                 .matchAny(o -> log.info("the fuck? get outta here lol"))
                 .build();
     }
@@ -108,5 +114,9 @@ public class MapActor<K, V> extends AbstractActorWithTimers {
 
     private void remove(RemoveRequest<K> removeRequest) {
         sender().tell(this.internalState.remove(removeRequest.key), self());
+    }
+
+    public void kill(KillRequest msg){
+        getContext().stop(getSelf());
     }
 }

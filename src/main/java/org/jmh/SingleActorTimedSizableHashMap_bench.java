@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SingleActorTimedSizableHashMap_bench {
 
-    final static int COUNT = 100;
+    final static int COUNT = 1000;
 
     @State(Scope.Thread)
     public static class MyState {
@@ -28,16 +28,18 @@ public class SingleActorTimedSizableHashMap_bench {
 
         @TearDown(Level.Trial)
         public void doTearDown() {
-            // TODO : kill the running thread cause they ain't stoppin
+            map.kill();
             System.out.println("Do TearDown");
         }
 
-        public TimedSizableMap<Integer, String> map = new SingleActorTimedSizableHashMap<>();
+        public SingleActorTimedSizableHashMap<Integer, String> map = new SingleActorTimedSizableHashMap<>();
     }
 
     @Benchmark
     @BenchmarkMode(Mode.All)
     @OutputTimeUnit(TimeUnit.SECONDS)
+    @Warmup(iterations = 1, time = 2)
+    @Measurement(iterations = 2, time = 5)
     public void getSize(MyState state) throws InterruptedException {
         for(int i =0; i<COUNT;i++)
             state.map.size();
@@ -89,8 +91,6 @@ public class SingleActorTimedSizableHashMap_bench {
 
         Options opt = new OptionsBuilder()
                 .include(SingleActorTimedSizableHashMap_bench.class.getSimpleName())
-                .warmupIterations(1)
-                .measurementIterations(1)
                 .forks(1)
                 .build();
 

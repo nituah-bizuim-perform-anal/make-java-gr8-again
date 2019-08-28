@@ -70,4 +70,8 @@ public class SingleActorTimedSizableHashMap<K, V> implements TimedSizableMap<K, 
             return Optional.ofNullable(null);
         }
     }
+
+    public void kill(){
+        this.mapActor.tell(new MapActor.KillRequest(), ActorRef.noSender());
+    }
 }

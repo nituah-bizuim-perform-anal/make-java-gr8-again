@@ -56,4 +56,10 @@ public class MapActorTest {
         assertEquals(0,map.size());
     }
 
+    @Test
+    public void Kill() throws InterruptedException {
+        SingleActorTimedSizableHashMap<String, Integer> map = new SingleActorTimedSizableHashMap<>();
+        Thread.sleep(100);
+        map.kill();
+    }
 }
