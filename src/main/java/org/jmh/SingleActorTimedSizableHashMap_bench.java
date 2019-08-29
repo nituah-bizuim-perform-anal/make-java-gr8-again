@@ -1,10 +1,13 @@
 package org.jmh;
 
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.profile.GCProfiler;
+import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.openjdk.jmh.runner.options.TimeValue;
 import org.single_actor.SingleActorTimedSizableHashMap;
 
 import java.util.Optional;
@@ -64,11 +67,14 @@ public class SingleActorTimedSizableHashMap_bench {
             state.map.put(i, String.valueOf(i), 10,TimeUnit.SECONDS);
     }
 
+    /*
+    // test is problematic
     @Benchmark
     public void removeKey(MyState state) throws InterruptedException {
         for(int i =0; i<COUNT;i++)
             state.map.remove(42069);
     }
+     */
 
     @Benchmark
     public void removeKeys(MyState state) throws InterruptedException {
@@ -94,10 +100,17 @@ public class SingleActorTimedSizableHashMap_bench {
          */
 
         Options opt = new OptionsBuilder()
+                .addProfiler(org.openjdk.jmh.profile.GCProfiler.class)
                 .include(SingleActorTimedSizableHashMap_bench.class.getSimpleName())
                 .forks(1)
                 .measurementIterations(1)
+                .measurementTime(TimeValue.seconds(1))
                 .warmupIterations(1)
+                .warmupTime(TimeValue.seconds(1))
+                .result("result_singleactor.csv")
+                .resultFormat(ResultFormatType.CSV)
+                .jvmArgs("-server", "-XX:+UseG1GC", "-Xmx256m")
+                //.jvmArgs("-Xms1g", "-Xmx1g", "-Xmn800m", "-server")
                 .build();
 
         new Runner(opt).run();
