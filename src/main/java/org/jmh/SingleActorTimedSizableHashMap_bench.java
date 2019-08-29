@@ -10,6 +10,8 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
 import org.single_actor.SingleActorTimedSizableHashMap;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -99,6 +101,8 @@ public class SingleActorTimedSizableHashMap_bench {
         java -cp  target/benchmarks.jar org.jmh.SingleActorTimedSizableHashMap_bench
          */
 
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyyMMdd_HHmmss");
+
         Options opt = new OptionsBuilder()
                 .addProfiler(org.openjdk.jmh.profile.GCProfiler.class)
                 .include(SingleActorTimedSizableHashMap_bench.class.getSimpleName())
@@ -107,7 +111,7 @@ public class SingleActorTimedSizableHashMap_bench {
                 .measurementTime(TimeValue.seconds(1))
                 .warmupIterations(1)
                 .warmupTime(TimeValue.seconds(1))
-                .result("result_singleactor.csv")
+                .result("result_singleactor" + formatter.format(new Date()) + ".csv")
                 .resultFormat(ResultFormatType.CSV)
                 .jvmArgs("-server", "-XX:+UseG1GC", "-Xmx256m")
                 //.jvmArgs("-Xms1g", "-Xmx1g", "-Xmn800m", "-server")
