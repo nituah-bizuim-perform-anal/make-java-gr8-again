@@ -61,5 +61,7 @@ public class MapActorTest {
         SingleActorTimedSizableHashMap<String, Integer> map = new SingleActorTimedSizableHashMap<>();
         Thread.sleep(100);
         map.kill();
+        //map.put("gil", 420, 69, TimeUnit.SECONDS);
+        //assertEquals(1,map.size());
     }
 }

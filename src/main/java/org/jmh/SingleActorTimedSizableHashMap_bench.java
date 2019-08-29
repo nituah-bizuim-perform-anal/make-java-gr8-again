@@ -1,6 +1,5 @@
 package org.jmh;
 
-import org.base.TimedSizableMap;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -11,9 +10,14 @@ import org.single_actor.SingleActorTimedSizableHashMap;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+/*
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.SECONDS)
+@Measurement(iterations = 20, time = 200, timeUnit = TimeUnit.SECONDS)
+@Warmup(iterations = 10, time = 200, timeUnit = TimeUnit.SECONDS)*/
 public class SingleActorTimedSizableHashMap_bench {
 
-    final static int COUNT = 10000;
+    final static int COUNT = 100;
 
     @State(Scope.Thread)
     public static class MyState {
@@ -22,7 +26,7 @@ public class SingleActorTimedSizableHashMap_bench {
         public void doSetup() {
             map = new SingleActorTimedSizableHashMap<>();
             for(int i=0;i<COUNT;++i){
-                map.put(i, String.valueOf(i), 10, TimeUnit.SECONDS);
+                map.put(i, String.valueOf(i), 10, TimeUnit.HOURS);
             }
         }
 
@@ -35,47 +39,38 @@ public class SingleActorTimedSizableHashMap_bench {
         public SingleActorTimedSizableHashMap<Integer, String> map = new SingleActorTimedSizableHashMap<>();
     }
 
+
     @Benchmark
-    @BenchmarkMode(Mode.All)
-    @OutputTimeUnit(TimeUnit.SECONDS)
-    @Warmup(iterations = 1, time = 2)
-    @Measurement(iterations = 2, time = 5)
     public void getSize(MyState state) throws InterruptedException {
         for(int i =0; i<COUNT;i++)
             state.map.size();
     }
 
+
+
     @Benchmark
+    /*
     @BenchmarkMode(Mode.All)
     @OutputTimeUnit(TimeUnit.SECONDS)
-    @Warmup(iterations = 1, time = 2)
+    @Warmup(iterations = 1, time = 2)*/
     public void getValues(MyState state) throws InterruptedException {
         for(int i =0; i<COUNT;i++)
             Optional.ofNullable(state.map.get(i));
     }
 
     @Benchmark
-    @BenchmarkMode(Mode.All)
-    @OutputTimeUnit(TimeUnit.SECONDS)
-    @Warmup(iterations = 1, time = 2)
     public void putKeys(MyState state) throws InterruptedException {
         for(int i =0; i<COUNT;i++)
             state.map.put(i, String.valueOf(i), 10,TimeUnit.SECONDS);
     }
 
     @Benchmark
-    @BenchmarkMode(Mode.All)
-    @OutputTimeUnit(TimeUnit.SECONDS)
-    @Warmup(iterations = 1, time = 2)
     public void removeKey(MyState state) throws InterruptedException {
         for(int i =0; i<COUNT;i++)
             state.map.remove(42069);
     }
 
     @Benchmark
-    @BenchmarkMode(Mode.All)
-    @OutputTimeUnit(TimeUnit.SECONDS)
-    @Warmup(iterations = 1, time = 2)
     public void removeKeys(MyState state) throws InterruptedException {
         for(int i =COUNT; i<COUNT * 2;i++)
             state.map.put(i, String.valueOf(i), 10,TimeUnit.SECONDS);
@@ -93,9 +88,16 @@ public class SingleActorTimedSizableHashMap_bench {
          *    $ java -jar target/benchmarks.jar
          */
 
+        /*
+        better yet run this
+        java -cp  target/benchmarks.jar org.jmh.SingleActorTimedSizableHashMap_bench
+         */
+
         Options opt = new OptionsBuilder()
                 .include(SingleActorTimedSizableHashMap_bench.class.getSimpleName())
                 .forks(1)
+                .measurementIterations(1)
+                .warmupIterations(1)
                 .build();
 
         new Runner(opt).run();
