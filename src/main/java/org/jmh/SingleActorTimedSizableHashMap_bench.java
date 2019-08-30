@@ -1,5 +1,6 @@
 package org.jmh;
 
+import org.imperialistic.CapitalisticTimedSizableHashMap;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.profile.GCProfiler;
 import org.openjdk.jmh.results.format.ResultFormatType;
@@ -51,16 +52,48 @@ public class SingleActorTimedSizableHashMap_bench {
     }
 
     @Benchmark
-    public void getValues(MyState state) throws InterruptedException {
-        for(int i =0; i<COUNT;i++)
-            Optional.ofNullable(state.map.get(i));
+    public Optional<Optional<String>> getValues(MyState state) throws InterruptedException {
+        Optional<Optional<String>> s = null;
+
+        for(int i = 0; i<COUNT; i++)
+            s = Optional.ofNullable(state.map.get(i));
+
+        return s;
     }
+
+    @Benchmark
+    public Optional<Optional<String>> getRandomValue(MyState state) throws InterruptedException {
+        return Optional.ofNullable(state.map.get((int)(Math.random() * COUNT + 1)));
+    }
+
+
 
     @Benchmark
     public void putKeys(MyState state) throws InterruptedException {
         for(int i =COUNT; i<COUNT*2;i++)
             state.map.put(i, String.valueOf(i), 1,TimeUnit.SECONDS);
     }
+
+
+    @Benchmark
+    @Threads(4)
+    public Optional<Optional<String>> getValuesMultiThreads(MyState state)throws InterruptedException {
+        Optional<Optional<String>> s = null;
+
+        for(int i =0; i<COUNT;i++)
+            s = Optional.ofNullable(state.map.get(i));
+
+        return s;
+    }
+
+
+    @Benchmark
+    @Threads(4)
+    public void putKeysMultiThreads(MyState state)throws InterruptedException {
+        for(int i =COUNT; i<COUNT*2;i++)
+            state.map.put(i, String.valueOf(i), 1,TimeUnit.SECONDS);
+    }
+
 
     /*
     // test is problematic
@@ -99,12 +132,12 @@ public class SingleActorTimedSizableHashMap_bench {
                 .include(SingleActorTimedSizableHashMap_bench.class.getSimpleName())
                 .forks(1)
                 //.threads(4)
-                .measurementIterations(1)
-                .measurementTime(TimeValue.seconds(1))
-                .warmupIterations(1)
-                .warmupTime(TimeValue.seconds(1))
-                .result("results/result_singleactor" + formatter.format(new Date()) + ".csv")
-                .resultFormat(ResultFormatType.CSV)
+                .measurementIterations(3)
+                .measurementTime(TimeValue.seconds(10))
+                .warmupIterations(2)
+                .warmupTime(TimeValue.seconds(10))
+                .result("results/result_singleactor" + formatter.format(new Date()) + ".json")
+                .resultFormat(ResultFormatType.JSON)
                 //.jvmArgs("-server", "-XX:+UseG1GC", "-Xmx256m")
                 .jvmArgs("-Xms1g", "-Xmx1g", "-Xmn800m", "-server")
                 .build();

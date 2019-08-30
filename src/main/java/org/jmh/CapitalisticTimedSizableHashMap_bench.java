@@ -9,17 +9,11 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-/*
-@BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.SECONDS)
-@Measurement(iterations = 20, time = 200, timeUnit = TimeUnit.SECONDS)
-@Warmup(iterations = 10, time = 200, timeUnit = TimeUnit.SECONDS)*/
 public class CapitalisticTimedSizableHashMap_bench {
 
     final static int COUNT = 1000;
@@ -50,9 +44,23 @@ public class CapitalisticTimedSizableHashMap_bench {
     }
 
     @Benchmark
-    public void getValues(MyState state) throws InterruptedException {
-        for(int i =0; i<COUNT;i++)
-            Optional.ofNullable(state.map.get(i));
+    public Optional<Optional<String>> getValues(MyState state) throws InterruptedException {
+        Optional<Optional<String>> s = null;
+
+        for(int i = 0; i<COUNT; i++)
+            s = Optional.ofNullable(state.map.get(i));
+
+        return s;
+    }
+
+    @Benchmark
+    public Optional<Optional<String>> getRandomValue(MyState state) throws InterruptedException {
+        Optional<Optional<String>> s = null;
+
+        for(int i = 0; i<COUNT; i++)
+            s = Optional.ofNullable(state.map.get((int)(Math.random() * COUNT + 1)));
+
+        return s;
     }
 
     @Benchmark
@@ -61,7 +69,23 @@ public class CapitalisticTimedSizableHashMap_bench {
             state.map.put(i, String.valueOf(i), 1,TimeUnit.SECONDS);
     }
 
+    @Benchmark
+    @Threads(4)
+    public Optional<Optional<String>> getValuesMultiThreads(MyState state)throws InterruptedException {
+        Optional<Optional<String>> s = null;
 
+        for(int i =0; i<COUNT;i++)
+            s = Optional.ofNullable(state.map.get(i));
+
+        return s;
+    }
+
+    @Benchmark
+    @Threads(4)
+    public void putKeysMultiThreads(MyState state)throws InterruptedException {
+        for(int i =COUNT; i<COUNT*2;i++)
+            state.map.put(i, String.valueOf(i), 1,TimeUnit.SECONDS);
+    }
 
 
     public static void main(String[] args) throws RunnerException {
@@ -89,8 +113,8 @@ public class CapitalisticTimedSizableHashMap_bench {
                 .measurementTime(TimeValue.seconds(1))
                 .warmupIterations(1)
                 .warmupTime(TimeValue.seconds(1))
-                .result("results\\result_imperialistic" + formatter.format(new Date()) + ".csv")
-                .resultFormat(ResultFormatType.CSV)
+                .result("results\\result_imperialistic" + formatter.format(new Date()) + ".json")
+                .resultFormat(ResultFormatType.JSON)
                 //.jvmArgs("-server", "-XX:+UseG1GC", "-Xmx256m")
                 .jvmArgs("-Xms1g", "-Xmx1g", "-Xmn800m", "-server")
                 .build();
