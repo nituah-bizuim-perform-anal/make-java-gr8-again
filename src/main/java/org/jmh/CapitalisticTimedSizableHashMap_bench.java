@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Warmup(iterations = 10, time = 200, timeUnit = TimeUnit.SECONDS)*/
 public class CapitalisticTimedSizableHashMap_bench {
 
-    final static int COUNT = 100;
+    final static int COUNT = 1000;
 
     @State(Scope.Thread)
     public static class MyState {
@@ -45,18 +45,11 @@ public class CapitalisticTimedSizableHashMap_bench {
 
 
     @Benchmark
-    public void getSize(MyState state) throws InterruptedException {
-        for(int i =0; i<COUNT;i++)
-            state.map.size();
+    public long getSize(MyState state) throws InterruptedException {
+        return state.map.size();
     }
 
-
-
     @Benchmark
-    /*
-    @BenchmarkMode(Mode.All)
-    @OutputTimeUnit(TimeUnit.SECONDS)
-    @Warmup(iterations = 1, time = 2)*/
     public void getValues(MyState state) throws InterruptedException {
         for(int i =0; i<COUNT;i++)
             Optional.ofNullable(state.map.get(i));
@@ -64,26 +57,11 @@ public class CapitalisticTimedSizableHashMap_bench {
 
     @Benchmark
     public void putKeys(MyState state) throws InterruptedException {
-        for(int i =0; i<COUNT;i++)
-            state.map.put(i, String.valueOf(i), 10,TimeUnit.SECONDS);
+        for(int i =COUNT; i<COUNT*2;i++)
+            state.map.put(i, String.valueOf(i), 1,TimeUnit.SECONDS);
     }
 
-    /*
-    // test is problematic
-    @Benchmark
-    public void removeKey(MyState state) throws InterruptedException {
-        for(int i =0; i<COUNT;i++)
-            state.map.remove(42069);
-    }
-     */
 
-    @Benchmark
-    public void removeKeys(MyState state) throws InterruptedException {
-        for(int i =COUNT; i<COUNT * 2;i++)
-            state.map.put(i, String.valueOf(i), 10,TimeUnit.SECONDS);
-        for(int i =COUNT; i<COUNT * 2;i++)
-            state.map.remove(i);
-    }
 
 
     public static void main(String[] args) throws RunnerException {
@@ -106,14 +84,15 @@ public class CapitalisticTimedSizableHashMap_bench {
                 .addProfiler(org.openjdk.jmh.profile.GCProfiler.class)
                 .include(CapitalisticTimedSizableHashMap_bench.class.getSimpleName())
                 .forks(1)
+                //.threads(4)
                 .measurementIterations(1)
                 .measurementTime(TimeValue.seconds(1))
                 .warmupIterations(1)
                 .warmupTime(TimeValue.seconds(1))
-                .result("result_imperialistic" + formatter.format(new Date()) + ".csv")
+                .result("results\\result_imperialistic" + formatter.format(new Date()) + ".csv")
                 .resultFormat(ResultFormatType.CSV)
-                .jvmArgs("-server", "-XX:+UseG1GC", "-Xmx256m")
-                //.jvmArgs("-Xms1g", "-Xmx1g", "-Xmn800m", "-server")
+                //.jvmArgs("-server", "-XX:+UseG1GC", "-Xmx256m")
+                .jvmArgs("-Xms1g", "-Xmx1g", "-Xmn800m", "-server")
                 .build();
 
         new Runner(opt).run();
