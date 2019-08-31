@@ -38,6 +38,14 @@ public class MapActorTest {
         assertEquals(a, 420);
         assertEquals(b, 421);
         assertEquals(c, 4200);
+
+        starts = Instant.now();
+        for (int i = 0; i < 1000; i++) {
+            int bla69 = map.get("gil3").get();
+        }
+        ends = Instant.now();
+
+        System.out.println(Duration.between(starts, ends));
     }
 
     @Test

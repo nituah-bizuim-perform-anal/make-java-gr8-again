@@ -1,28 +1,20 @@
 package org.jmh;
 
-import org.imperialistic.CapitalisticTimedSizableHashMap;
+import org.boxed_single_actor.BoxedSingleActorTimedSizableHashMap;
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.profile.GCProfiler;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
-import org.single_actor.SingleActorTimedSizableHashMap;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-/*
-@BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.SECONDS)
-@Measurement(iterations = 20, time = 200, timeUnit = TimeUnit.SECONDS)
-@Warmup(iterations = 10, time = 200, timeUnit = TimeUnit.SECONDS)*/
-public class SingleActorTimedSizableHashMap_bench {
-
+public class BoxedSingleActorTimedSizableHashMap_bench {
     final static int COUNT = 1000;
 
     @State(Scope.Thread)
@@ -31,7 +23,7 @@ public class SingleActorTimedSizableHashMap_bench {
         @Setup(Level.Trial)
         public void doSetup() throws InterruptedException {
             System.out.println("SETTING UP");
-            map = new SingleActorTimedSizableHashMap<>();
+            map = new BoxedSingleActorTimedSizableHashMap<>();
             for(int i=0;i<COUNT;++i){
                 map.put(i, String.valueOf(i), 10, TimeUnit.HOURS);
             }
@@ -47,17 +39,17 @@ public class SingleActorTimedSizableHashMap_bench {
             System.out.println("Do TearDown");
         }
 
-        public SingleActorTimedSizableHashMap<Integer, String> map = new SingleActorTimedSizableHashMap<>();
+        public BoxedSingleActorTimedSizableHashMap<Integer, String> map = new BoxedSingleActorTimedSizableHashMap<>();
     }
 
 
     @Benchmark
-    public long getSize(MyState state) throws InterruptedException {
+    public long getSize(BoxedSingleActorTimedSizableHashMap_bench.MyState state) throws InterruptedException {
         return state.map.size();
     }
 
     @Benchmark
-    public Optional<String> getValues(MyState state) throws InterruptedException {
+    public Optional<String> getValues(BoxedSingleActorTimedSizableHashMap_bench.MyState state) throws InterruptedException {
         Optional<String> s = null;
 
         for(int i = 0; i<COUNT; i++)
@@ -67,14 +59,14 @@ public class SingleActorTimedSizableHashMap_bench {
     }
 
     @Benchmark
-    public Optional<String> getRandomValue(MyState state) throws InterruptedException {
+    public Optional<String> getRandomValue(BoxedSingleActorTimedSizableHashMap_bench.MyState state) throws InterruptedException {
         return state.map.get((int)(Math.random() * COUNT + 1));
     }
 
 
 
     @Benchmark
-    public void putKeys(MyState state) throws InterruptedException {
+    public void putKeys(BoxedSingleActorTimedSizableHashMap_bench.MyState state) throws InterruptedException {
         for(int i =COUNT; i<COUNT*2;i++)
             state.map.put(i, String.valueOf(i), 1,TimeUnit.SECONDS);
     }
@@ -82,7 +74,7 @@ public class SingleActorTimedSizableHashMap_bench {
 
     @Benchmark
     @Threads(4)
-    public Optional<String> getValuesMultiThreads(MyState state)throws InterruptedException {
+    public Optional<String> getValuesMultiThreads(BoxedSingleActorTimedSizableHashMap_bench.MyState state)throws InterruptedException {
         Optional<String> s = null;
 
         for(int i =0; i<COUNT;i++)
@@ -94,7 +86,7 @@ public class SingleActorTimedSizableHashMap_bench {
 
     @Benchmark
     @Threads(4)
-    public void putKeysMultiThreads(MyState state)throws InterruptedException {
+    public void putKeysMultiThreads(BoxedSingleActorTimedSizableHashMap_bench.MyState state)throws InterruptedException {
         for(int i =COUNT; i<COUNT*2;i++)
             state.map.put(i, String.valueOf(i), 1,TimeUnit.SECONDS);
     }
@@ -127,14 +119,14 @@ public class SingleActorTimedSizableHashMap_bench {
 
         /*
         better yet run this
-        java -cp  target/benchmarks.jar org.jmh.SingleActorTimedSizableHashMap_bench
+        java -cp  target/benchmarks.jar org.jmh.BoxedSingleActorTimedSizableHashMap_bench
          */
 
         SimpleDateFormat formatter= new SimpleDateFormat("yyyyMMdd_HHmmss");
 
         Options opt = new OptionsBuilder()
                 .addProfiler(org.openjdk.jmh.profile.GCProfiler.class)
-                .include(SingleActorTimedSizableHashMap_bench.class.getSimpleName())
+                .include(BoxedSingleActorTimedSizableHashMap_bench.class.getSimpleName())
                 .forks(1)
                 //.threads(4)
                 .measurementIterations(1)

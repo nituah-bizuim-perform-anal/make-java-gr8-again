@@ -1,10 +1,8 @@
 package org.test;
 
 import org.base.TimedSizableMap;
-import org.imperialistic.CapitalisticTimedSizableHashMap;
-import org.junit.Assert;
+import org.boxed_single_actor.BoxedSingleActorTimedSizableHashMap;
 import org.junit.Test;
-import org.single_actor.SingleActorTimedSizableHashMap;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -13,11 +11,10 @@ import java.util.stream.IntStream;
 
 import static junit.framework.TestCase.assertEquals;
 
-public class CapitalisticTimedSizableHashMapTest {
-
+public class BoxedSingleActorTimedSizableHashMapTest {
     @Test
-    public void CapitalisticTimedSizableHashMap_GetXD() throws Exception {
-        CapitalisticTimedSizableHashMap<String, Integer> map = new CapitalisticTimedSizableHashMap<>();
+    public void BoxedSingleActorTimedSizableHashMap_GetXD() throws Exception {
+        BoxedSingleActorTimedSizableHashMap<String, Integer> map = new BoxedSingleActorTimedSizableHashMap<>();
         map.put("gil", 420, 500, TimeUnit.SECONDS);
         map.put("gil2", 421, 500, TimeUnit.SECONDS);
         map.put("gil3", 4200, 500, TimeUnit.SECONDS);
@@ -46,13 +43,13 @@ public class CapitalisticTimedSizableHashMapTest {
 
     @Test
     public void SingleMapActor_GetSize(){
-        TimedSizableMap<String, Integer> map = new CapitalisticTimedSizableHashMap<>();
+        TimedSizableMap<String, Integer> map = new BoxedSingleActorTimedSizableHashMap<>();
         assertEquals(0,map.size());
     }
 
     @Test
     public void Capitalistic_Insert() throws InterruptedException {
-        TimedSizableMap<String, Integer> map = new CapitalisticTimedSizableHashMap<>();
+        TimedSizableMap<String, Integer> map = new BoxedSingleActorTimedSizableHashMap<>();
         map.put("gil", 420, 69, TimeUnit.SECONDS);
         map.put("gil2", 421, 629, TimeUnit.SECONDS);
         map.put("gil3", 4200, 619, TimeUnit.SECONDS);
@@ -61,7 +58,7 @@ public class CapitalisticTimedSizableHashMapTest {
 
     @Test
     public void Capitalistic_MultiThreadedPutAndGet() throws Exception {
-        TimedSizableMap<String, Integer> map = new CapitalisticTimedSizableHashMap<>();
+        TimedSizableMap<String, Integer> map = new BoxedSingleActorTimedSizableHashMap<>();
 
         Executor exec1 = Executors.newSingleThreadExecutor();
         Executor exec2 = Executors.newSingleThreadExecutor();
@@ -92,7 +89,7 @@ public class CapitalisticTimedSizableHashMapTest {
 
     @Test
     public void Capitalistic_Remove_Key_Wait_Forever_Die_Respawn_And_Check_That_Item_Has_Been_Automatically_Removed_Test() throws InterruptedException {
-        TimedSizableMap<String, Integer> map = new CapitalisticTimedSizableHashMap<>();
+        TimedSizableMap<String, Integer> map = new BoxedSingleActorTimedSizableHashMap<>();
         map.put("hh", 420, 5, TimeUnit.SECONDS);
         Thread.sleep(100);
         assertEquals(1, map.size());
@@ -102,7 +99,7 @@ public class CapitalisticTimedSizableHashMapTest {
 
     @Test
     public void Capitalistic_Remove_Key() throws InterruptedException {
-        TimedSizableMap<String, Integer> map = new CapitalisticTimedSizableHashMap<>();
+        TimedSizableMap<String, Integer> map = new BoxedSingleActorTimedSizableHashMap<>();
         map.put("gil", 420, 69, TimeUnit.SECONDS);
         map.remove("gil");
         assertEquals(0,map.size());
@@ -110,7 +107,7 @@ public class CapitalisticTimedSizableHashMapTest {
 
     @Test
     public void Capitalistic_Remove_Empty() throws InterruptedException {
-        TimedSizableMap<String, Integer> map = new CapitalisticTimedSizableHashMap<>();
+        TimedSizableMap<String, Integer> map = new BoxedSingleActorTimedSizableHashMap<>();
         map.put("gil", 420, 69, TimeUnit.SECONDS);
         map.remove("gil");
         assertEquals(0,map.size());
@@ -119,7 +116,7 @@ public class CapitalisticTimedSizableHashMapTest {
     private static final int MAP_SIZE = 150000;
     private static final int NUM_PARTIES = 4;
     private final CyclicBarrier _bar = new CyclicBarrier(NUM_PARTIES);
-    private final TimedSizableMap<Integer, Object> map = new CapitalisticTimedSizableHashMap<>();
+    private final TimedSizableMap<Integer, Object> map = new BoxedSingleActorTimedSizableHashMap<>();
 
     private final Runnable PUT_ACTION = () -> {
         try {
