@@ -6,6 +6,9 @@ import org.concurrent_actors.MasterSlaveActorsTimedSizableHashMap;
 import org.junit.Test;
 import org.single_actor.SingleActorTimedSizableHashMap;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.TemporalUnit;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
@@ -14,15 +17,23 @@ import static junit.framework.TestCase.assertEquals;
 public class MapActorTest {
 
     @Test
-    public void MasterSlaveActorsMap_GetXD() throws Exception {
+    public void SingleActor_GetXD() throws Exception {
         SingleActorTimedSizableHashMap<String, Integer> map = new SingleActorTimedSizableHashMap<>();
         map.put("gil", 420, 500, TimeUnit.SECONDS);
         map.put("gil2", 421, 500, TimeUnit.SECONDS);
         map.put("gil3", 4200, 500, TimeUnit.SECONDS);
         Thread.sleep(200);
 
+        Instant starts = Instant.now();
         int a = map.get("gil").get();
+        Instant ends = Instant.now();
+        System.out.println(Duration.between(starts, ends));
+
+        starts = Instant.now();
         int b = map.get("gil2").get();
+        ends = Instant.now();
+        System.out.println(Duration.between(starts, ends));
+
         int c = map.get("gil3").get();
         assertEquals(a, 420);
         assertEquals(b, 421);

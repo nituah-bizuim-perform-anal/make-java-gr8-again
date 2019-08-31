@@ -33,6 +33,7 @@ public class SingleActorTimedSizableHashMap_bench {
             map = new SingleActorTimedSizableHashMap<>();
             for(int i=0;i<COUNT;++i){
                 map.put(i, String.valueOf(i), 10, TimeUnit.HOURS);
+                Thread.sleep(5000);
             }
         }
 
