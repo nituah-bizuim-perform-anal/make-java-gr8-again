@@ -44,21 +44,21 @@ public class CapitalisticTimedSizableHashMap_bench {
     }
 
     @Benchmark
-    public Optional<Optional<String>> getValues(MyState state) throws InterruptedException {
-        Optional<Optional<String>> s = null;
+    public Optional<String> getValues(MyState state) throws InterruptedException {
+        Optional<String> s = null;
 
         for(int i = 0; i<COUNT; i++)
-            s = Optional.ofNullable(state.map.get(i));
+            s = state.map.get(i);
 
         return s;
     }
 
     @Benchmark
-    public Optional<Optional<String>> getRandomValue(MyState state) throws InterruptedException {
-        Optional<Optional<String>> s = null;
+    public Optional<String> getRandomValue(MyState state) throws InterruptedException {
+        Optional<String> s = null;
 
         for(int i = 0; i<COUNT; i++)
-            s = Optional.ofNullable(state.map.get((int)(Math.random() * COUNT + 1)));
+            s = state.map.get((int)(Math.random() * COUNT + 1));
 
         return s;
     }
@@ -71,11 +71,11 @@ public class CapitalisticTimedSizableHashMap_bench {
 
     @Benchmark
     @Threads(4)
-    public Optional<Optional<String>> getValuesMultiThreads(MyState state)throws InterruptedException {
-        Optional<Optional<String>> s = null;
+    public Optional<String> getValuesMultiThreads(MyState state)throws InterruptedException {
+        Optional<String> s = null;
 
         for(int i =0; i<COUNT;i++)
-            s = Optional.ofNullable(state.map.get(i));
+            s = state.map.get(i);
 
         return s;
     }

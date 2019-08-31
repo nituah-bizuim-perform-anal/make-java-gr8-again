@@ -35,7 +35,7 @@ public interface TimedMap<K, V> {
      * @return An optional capturing the key's corresponding value,
      * or Optional.EMPTY if the key does not exist in the map.
      */
-    public Optional<V> get(K key);
+    public Optional<V> get(K key) throws Exception;
 
     /**
      * Remove the input key and its corresponding value from the map.

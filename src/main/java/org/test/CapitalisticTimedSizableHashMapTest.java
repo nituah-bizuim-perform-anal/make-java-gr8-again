@@ -28,7 +28,7 @@ public class CapitalisticTimedSizableHashMapTest {
     }
 
     @Test
-    public void Capitalistic_MultiThreadedPutAndGet() throws InterruptedException {
+    public void Capitalistic_MultiThreadedPutAndGet() throws Exception {
         TimedSizableMap<String, Integer> map = new CapitalisticTimedSizableHashMap<>();
 
         Executor exec1 = Executors.newSingleThreadExecutor();
