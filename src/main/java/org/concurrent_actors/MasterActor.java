@@ -108,7 +108,7 @@ public class MasterActor<K, V> extends AbstractActorWithTimers {
 
         // TODO - MAKE THIS WORK LOL
         // router.tell(new Broadcast("Watch out for Davy Jones' locker"), getTestActor());
-        router2.tell(new Broadcast(new MapStateActor.UpdateStateRequest<>(this.internalState)), getSelf());
+        router2.tell(new Broadcast(new MapStateActor.ApplyPutDeltaRequest<>(putRequest.key, putRequest.value)), getSelf());
 
         // NOTE - VERY IMPORTANT!!!!!%@#$)$@#*)!@#$jasfdkasdfjlkfdsjglksdfjgkl my dad beats me at nights
         // According to Akka's documentation, startSingleTimer ensures that if we schedule 2 single timers
@@ -121,6 +121,6 @@ public class MasterActor<K, V> extends AbstractActorWithTimers {
     private void remove(RemoveRequest<K> removeRequest) {
         V res = this.internalState.remove(removeRequest.key);
         sender().tell(res, self());
-        router2.tell(new Broadcast(new MapStateActor.UpdateStateRequest<>(this.internalState)), getSelf());
+        router2.tell(new Broadcast(new MapStateActor.ApplyRemoveDeltaRequest<>(removeRequest.key)), getSelf());
     }
 }

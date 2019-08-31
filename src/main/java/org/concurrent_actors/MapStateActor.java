@@ -14,15 +14,33 @@ import java.util.concurrent.TimeUnit;
 public class MapStateActor<K, V> extends AbstractActor {
     private Map<K, V> internalState;
 
-    public static class UpdateStateRequest<K, V> {
-        private final Map<K, V> updatedState;
+    public static class ApplyRemoveDeltaRequest<K> {
+        private final K removedItemKey;
 
-        public UpdateStateRequest(Map<K, V> updatedState) {
-            this.updatedState = updatedState;
+        public ApplyRemoveDeltaRequest(K removedKey) {
+            this.removedItemKey = removedKey;
         }
 
-        public Map<K, V> getUpdatedState() {
-            return this.updatedState;
+        public K getRemovedItemKey() {
+            return this.removedItemKey;
+        }
+    }
+
+    public static class ApplyPutDeltaRequest<K, V> {
+        private final K puttedKey;
+        private final V puttedValue;
+
+        public ApplyPutDeltaRequest(K puttedKey, V puttedValue) {
+            this.puttedKey = puttedKey;
+            this.puttedValue = puttedValue;
+        }
+
+        public K getPuttedKey() {
+            return puttedKey;
+        }
+
+        public V getPuttedValue() {
+            return puttedValue;
         }
     }
 
@@ -39,7 +57,8 @@ public class MapStateActor<K, V> extends AbstractActor {
         return receiveBuilder()
                 .match(MasterActor.GetRequest.class, this::get)
                 .match(MasterActor.GetSizeRequest.class, this::getSize)
-                .match(UpdateStateRequest.class, this::updateState)
+                .match(ApplyRemoveDeltaRequest.class, this::applyRemoval)
+                .match(ApplyPutDeltaRequest.class, this::applyPut)
                 .matchAny(o -> System.out.println("I'm coming home againnnnnnnn"))
                 .build();
     }
@@ -52,7 +71,11 @@ public class MapStateActor<K, V> extends AbstractActor {
         getSender().tell(this.internalState.size(), getContext().getParent());
     }
 
-    private void updateState(UpdateStateRequest<K, V> updateStateRequest) {
-        this.internalState = new ConcurrentHashMap<>(updateStateRequest.updatedState);
+    private void applyRemoval(ApplyRemoveDeltaRequest<K> updateStateRequest) {
+        this.internalState.remove(updateStateRequest.getRemovedItemKey());
+    }
+
+    private void applyPut(ApplyPutDeltaRequest<K, V> updateStateRequest) {
+        this.internalState.put(updateStateRequest.puttedKey, updateStateRequest.puttedValue);
     }
 }
