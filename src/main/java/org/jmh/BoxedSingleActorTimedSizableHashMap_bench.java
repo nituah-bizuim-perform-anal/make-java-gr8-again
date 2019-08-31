@@ -133,7 +133,7 @@ public class BoxedSingleActorTimedSizableHashMap_bench {
                 .measurementTime(TimeValue.seconds(1))
                 .warmupIterations(1)
                 .warmupTime(TimeValue.seconds(1))
-                .result("results/result_singleactor" + formatter.format(new Date()) + ".json")
+                .result("results/result_boxedactor" + formatter.format(new Date()) + ".json")
                 .resultFormat(ResultFormatType.JSON)
                 //.jvmArgs("-server", "-XX:+UseG1GC", "-Xmx256m")
                 .jvmArgs("-Xms1g", "-Xmx1g", "-Xmn800m", "-server")

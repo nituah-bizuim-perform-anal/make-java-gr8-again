@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MasterActor<K, V> extends AbstractActorWithTimers {
     private final HashMap<K, V> internalState;
-    // private Router router;
+    private Router router;
     private ActorRef router2;
 
     static Props props() {
@@ -26,7 +26,7 @@ public class MasterActor<K, V> extends AbstractActorWithTimers {
 
         List<Routee> routees = new ArrayList<Routee>();
 
-        router2 = getContext().actorOf(new SmallestMailboxPool(4).props(Props.create(MapStateActor.class)));
+        router2 = getContext().actorOf(new RoundRobinPool(4).props(Props.create(MapStateActor.class)));
     }
 
     public static class GetRequest<K, V> {
