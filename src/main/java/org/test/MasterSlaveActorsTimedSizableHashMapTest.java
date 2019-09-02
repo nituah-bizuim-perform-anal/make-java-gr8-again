@@ -80,9 +80,6 @@ public class MasterSlaveActorsTimedSizableHashMapTest {
         MasterSlaveActorsTimedSizableHashMap<String, Integer> map = new MasterSlaveActorsTimedSizableHashMap<>();
         Thread.sleep(100);
 
-        // TODO - UNMARK THIS AND SUPPORT KILL GILZA
-        // map.kill();
-
         //map.put("gil", 420, 69, TimeUnit.SECONDS);
         //assertEquals(1,map.size());
     }

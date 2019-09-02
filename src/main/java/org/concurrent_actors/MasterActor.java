@@ -1,6 +1,6 @@
 package org.concurrent_actors;
 
-// Or "Instrumentation" Actor. fucking sue me.
+// Or "Instrumentation" Actor. sue me.
 
 import akka.actor.*;
 import akka.routing.*;
@@ -106,11 +106,8 @@ public class MasterActor<K, V> extends AbstractActorWithTimers {
     private void put(PutRequest<K, V> putRequest) {
         this.internalState.put(putRequest.key, putRequest.value);
 
-        // TODO - MAKE THIS WORK LOL
-        // router.tell(new Broadcast("Watch out for Davy Jones' locker"), getTestActor());
         router2.tell(new Broadcast(new MapStateActor.ApplyPutDeltaRequest<>(putRequest.key, putRequest.value)), getSelf());
 
-        // NOTE - VERY IMPORTANT!!!!!%@#$)$@#*)!@#$jasfdkasdfjlkfdsjglksdfjgkl my dad beats me at nights
         // According to Akka's documentation, startSingleTimer ensures that if we schedule 2 single timers
         // with the same key, the previous one is cancelled. Hence we don't have to use the AtomicLong and the wrapper
         // class that uses it anymore - we can have Akka take care for it.

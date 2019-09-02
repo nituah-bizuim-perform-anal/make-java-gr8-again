@@ -96,7 +96,7 @@ public class ModificationActor<K, V> extends AbstractActorWithTimers {
         return receiveBuilder()
                 .match(RemoveRequest.class, this::remove)
                 .match(PutRequest.class, this::put)
-                .matchAny(o -> log.info("the fuck? get outta here lol"))
+                .matchAny(o -> log.info("get outta here lol"))
                 .build();
     }
 
@@ -105,7 +105,6 @@ public class ModificationActor<K, V> extends AbstractActorWithTimers {
 
         sender().tell(new UpdateStateRequest(this.internalState), self());
 
-        // NOTE - VERY IMPORTANT!!!!!%@#$)$@#*)!@#$jasfdkasdfjlkfdsjglksdfjgkl my dad beats me at nights
         // According to Akka's documentation, startSingleTimer ensures that if we schedule 2 single timers
         // with the same key, the previous one is cancelled. Hence we don't have to use the AtomicLong and the wrapper
         // class that uses it anymore - we can have Akka take care for it.

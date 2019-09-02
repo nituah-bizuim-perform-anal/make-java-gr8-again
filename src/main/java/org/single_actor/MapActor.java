@@ -88,14 +88,13 @@ public class MapActor<K, V> extends AbstractActorWithTimers {
                 .match(GetSizeRequest.class, this::getSize)
                 .match(PutRequest.class, this::put)
                 .match(KillRequest.class, this::kill)
-                .matchAny(o -> log.info("the fuck? get outta here lol"))
+                .matchAny(o -> log.info("......."))
                 .build();
     }
 
     private void put(PutRequest<K, V> putRequest) {
         this.internalState.put(putRequest.key, putRequest.value);
 
-        // NOTE - VERY IMPORTANT!!!!!%@#$)$@#*)!@#$jasfdkasdfjlkfdsjglksdfjgkl my dad beats me at nights
         // According to Akka's documentation, startSingleTimer ensures that if we schedule 2 single timers
         // with the same key, the previous one is cancelled. Hence we don't have to use the AtomicLong and the wrapper
         // class that uses it anymore - we can have Akka take care for it.
